@@ -8,15 +8,6 @@
 /* Includes */
 include("databaseConnection.php");
 
-/* Create connection to DB */
-function dbConnect () {
-    //try connecting to DB with mysqli object and return it if successful
-    $conn = new mysqli($GLOBALS['host'], $GLOBALS['username'], $GLOBALS['password'], $GLOBALS['database']);
-    if ($conn->connect_error) {
-        die("Connection failed: ". $conn->connect_error);
-    }
-    return $conn;
-}
 /* run single sql query without return */
 function runQuery ($sql) {
         $conn = dbConnect();
@@ -28,14 +19,30 @@ function runQuery ($sql) {
         $conn->close();
 }
 /* return an array of arrays populated with entire table from DB */
-function getTable () {
+function getTableData ($table) {
+    $query = "SELECT * FROM " . $table . " ";
+    $conn = dbConnect();
+    $result = $conn->query($query);
 
+    if ($result->num_rows > 0) {
+        $result->fetch_assoc();
+    } else {
+        throw new \mysql_xdevapi\Exception("No rows found in table: " . $table . ".");
+    }
+
+    return $result;
 }
 /* return a single column of information from a table */ 
 function getSingleColumn () {
 
 }
-/* return a single row of information from a table */
-function getSingleRow () {
-
+/* validate login information with db */
+function validateLogin ($uname, $password) {
+    $userTableData = getTableData("users");
+    foreach ($userTableData as $userData) {
+        if ($userData['username'] == $uname && $userData['password'] == $password) {
+            return True;
+        }
+    }
+    return False;
 }
