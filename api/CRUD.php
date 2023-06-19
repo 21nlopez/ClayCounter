@@ -10,8 +10,13 @@ function createUser (
     $uname,
     $pass
 ) {
-        $query = "            
+    $query = "            
             INSERT INTO users (email, first_name, last_name, username, password) 
             VALUES ('" . $em . "', '" . $fname . "', '" . $lname . "', '" . $uname . "', '" . $pass . "')";
-        runQuery($query);
+    runQuery($query);
+}
+
+function readUser ($userIDX) {
+    $query = "SELECT * FROM users WHERE idx = " . $userIDX . ";";
+    return dbConnect()->query($query)->fetch_assoc();
 }

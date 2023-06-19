@@ -1,4 +1,5 @@
-<?php 
+<?php
+session_start();
 /**
  * DATE: 6/17/23
  * AUTHOR: Niko Lopez
@@ -41,6 +42,7 @@ function validateLogin ($uname, $password) {
     $userTableData = getTableData("users");
     foreach ($userTableData as $userData) {
         if ($userData['username'] == $uname && $userData['password'] == $password) {
+            $_SESSION['idx'] = $userData['idx'];
             return True;
         }
     }
