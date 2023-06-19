@@ -1,4 +1,5 @@
-<?php 
+<?php
+session_start();
 /**
  * DATE: 6/17/23
  * AUTHOR: Niko Lopez
@@ -8,57 +9,42 @@
 /* Includes */
 include("databaseConnection.php");
 
-/* Create connection to DB */
-function dbConnect () {
-    $conn = NULL; 
-    //try connecting to DB with mysqli object and return it if successful
-    try {
-        $conn = new mysqli($GLOBALS['host'], $GLOBALS['username'], $GLOBALS['password'], $GLOBALS['database']);
-        return $conn;
-    } catch (Exception $e) {
-        Throw new Exception("Unable to establish connection to database");
-    }
-}
 /* run single sql query without return */
 function runQuery ($sql) {
-    try { 
         $conn = dbConnect();
-        $conn -> query($sql);
-        $conn -> close();
-    } catch (Exception $e) {
-        throw new Exception("Query run failed");
-    }
+        if ($conn->query($sql) === true) {
+            echo "query ran";
+        } else {
+            echo "error running query";
+        }
+        $conn->close();
 }
 /* return an array of arrays populated with entire table from DB */
-function getTable () {
+function getTableData ($table) {
+    $query = "SELECT * FROM " . $table . " ";
+    $conn = dbConnect();
+    $result = $conn->query($query);
 
+    if ($result->num_rows > 0) {
+        $result->fetch_assoc();
+    } else {
+        throw new \mysql_xdevapi\Exception("No rows found in table: " . $table . ".");
+    }
+
+    return $result;
 }
 /* return a single column of information from a table */ 
 function getSingleColumn () {
 
 }
-/* return a single row of information from a table */
-function getSingleRow () {
-
-}
-/* create new entry in the users table */
-function createUser (
-    $em,
-    $fname,
-    $lname,
-    $uname,
-    $pass
-) {
-    try {
-        $query = "
-            INSERT INTO users (email, first_name, last_name, username, password)
-            VALUES (" . $em . ", " . $fname . ", " . $lname . ", " . $uname . ", " . $pass . ");
-        ";
-        runQuery($query);
-    } catch (Exception $e) {
-        Throw new Exception("There was an error adding the user to the database, please try again");
+/* validate login information with db */
+function validateLogin ($uname, $password) {
+    $userTableData = getTableData("users");
+    foreach ($userTableData as $userData) {
+        if ($userData['username'] == $uname && $userData['password'] == $password) {
+            $_SESSION['idx'] = $userData['idx'];
+            return True;
+        }
     }
-
+    return False;
 }
-
-?>
