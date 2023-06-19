@@ -7,9 +7,10 @@
         <div class="container">
             <div class="container aside">
                 <div class="card uv-card" style="width: 18rem;">
-                    <img src="..." class="card-img-top" alt="...">
+                    <img src="../images/genericUser.jpg" class="card-img-top" alt="Generic User">
                     <div class="card-body">
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <p class="user-name"><strong>Niko Lopez</strong></p>
+                        <p class="user-description">Fun and active</p>
                     </div>
                 </div>
 
